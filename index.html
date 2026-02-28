@@ -1,31 +1,38 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Natsuki Community Blog</title>
-    <link rel="stylesheet" href="assets/css/styles.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Natsuki Community Blog</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <meta name="description" content="マイクラサーバーのアップデートやイベント情報をお届け">
 </head>
 <body>
-    <header>
-        <img src="assets/img/server-icon.png" alt="Natsuki Community" class="logo">
+  <header class="site-header">
+    <div class="header-inner">
+      <img src="assets/img/server-icon.png" alt="Natsuki Community" class="logo">
+      <div class="site-title">
         <h1>Natsuki Community Blog</h1>
-        <p>マイクラサーバーのアップデートやイベント情報をお届け</p>
-    </header>
+        <p class="lead">マイクラサーバーのアップデートやイベント情報をお届け</p>
+      </div>
+    </div>
+  </header>
 
-    <main>
-        <section id="posts">
-            <h2>最新記事</h2>
-            <div class="post-list">
-                <!-- 記事は script.js で読み込み -->
-            </div>
-        </section>
-    </main>
+  <main class="container">
+    <section id="posts-section">
+      <h2>最新記事</h2>
+      <div id="post-list" class="post-list">
+      </div>
+    </section>
+  </main>
 
-    <footer>
-        <p>&copy; 2026 Natsuki Community</p>
-    </footer>
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; <span id="year"></span> Natsuki Community</p>
+      <p class="small">管理画面: <a href="assets/admin/admin.html">admin</a>（公開しない運用を推奨）</p>
+    </div>
+  </footer>
 
-    <script src="assets/js/script.js"></script>
+  <script src="assets/js/script.js"></script>
 </body>
 </html>
