@@ -6,89 +6,85 @@
 <title>Natsuki Community — 管理画面</title>
 <link rel="stylesheet" href="../css/styles.css">
 <style>
-/* 管理画面固有の軽いスタイル（styles.css を読みつつ上書き） */
-.admin-wrap{max-width:900px;margin:24px auto;padding:18px;background:#fff;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.06)}
-.admin-row{display:flex;gap:12px;flex-wrap:wrap}
+/* 管理画面専用の上書き */
+.admin-wrap{max-width:980px;margin:28px auto;padding:18px;background:#fff;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.06)}
+.admin-row{display:flex;gap:16px;flex-wrap:wrap}
 .form-control{width:100%;margin-bottom:12px}
 label{display:block;font-weight:600;margin-bottom:6px}
 input[type="text"], input[type="date"], textarea{width:100%;padding:8px;border:1px solid #ddd;border-radius:6px}
-textarea{min-height:160px;resize:vertical}
-button{padding:8px 12px;border-radius:6px;border:0;background:#1da1f2;color:#fff;cursor:pointer}
+textarea{min-height:180px;resize:vertical}
+button{padding:8px 12px;border-radius:6px;border:0;background:#0ea5e9;color:#fff;cursor:pointer}
 button.secondary{background:#666}
 .preview{border:1px solid #eee;padding:12px;border-radius:6px;background:#fafafa;margin-top:12px}
 .small{font-size:13px;color:#666}
 .input-inline{display:flex;gap:8px;align-items:center}
 img.preview-img{max-width:140px;border-radius:6px;margin-right:8px}
-.controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-footer.admin-foot{margin-top:14px;font-size:13px;color:#666}
+.controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.admin-foot{margin-top:12px;font-size:13px;color:#666}
 </style>
-<!-- JSZip + FileSaver（ZIP 出力のため、CDN利用） -->
+<!-- CDN: JSZip と FileSaver (ZIP出力用) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 </head>
 <body>
-<div class="admin-wrap">
-  <h2>Natsuki Community — 管理画面（記事作成）</h2>
-
-  <div class="admin-row">
-    <div style="flex:1 1 320px">
-      <div class="form-control">
-        <label for="title">記事タイトル</label>
-        <input id="title" type="text" placeholder="例：サーバーアップデート情報">
-      </div>
-
-      <div class="form-control input-inline">
-        <div style="flex:1">
-          <label for="date">日付</label>
-          <input id="date" type="date">
+  <div class="admin-wrap">
+    <h2>管理画面 — 記事作成</h2>
+    <div class="admin-row">
+      <div style="flex:1 1 420px">
+        <div class="form-control">
+          <label for="title">記事タイトル</label>
+          <input id="title" type="text" placeholder="例：サーバーアップデート情報">
         </div>
-        <div style="flex:1">
-          <label for="slug">スラッグ（ファイル名）</label>
-          <input id="slug" type="text" placeholder="自動生成されます（英数字とハイフン推奨）">
+
+        <div class="form-control input-inline">
+          <div style="flex:1">
+            <label for="date">日付</label>
+            <input id="date" type="date">
+          </div>
+          <div style="flex:1">
+            <label for="slug">スラッグ（ファイル名）</label>
+            <input id="slug" type="text" placeholder="自動生成されます（英数字とハイフン推奨）">
+          </div>
+        </div>
+
+        <div class="form-control">
+          <label for="excerpt">抜粋（短い説明）</label>
+          <input id="excerpt" type="text" placeholder="例：バージョン1.20に更新しました">
+        </div>
+
+        <div class="form-control">
+          <label for="content">本文（HTML 可。マークダウンも可だが HTML を貼ると確実）</label>
+          <textarea id="content" placeholder="<p>本文を書きます</p>"></textarea>
+        </div>
+
+        <div class="form-control">
+          <label for="images">画像（複数選択可）</label>
+          <input id="images" type="file" accept="image/*" multiple>
+          <div id="thumbs" style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"></div>
+        </div>
+
+        <div class="controls">
+          <button id="btn-preview">プレビュー</button>
+          <button id="btn-download-embedded">HTMLをダウンロード（画像埋め込み）</button>
+          <button id="btn-download-zip" class="secondary">ZIPをダウンロード（HTML＋画像）</button>
+          <button id="btn-copy" class="secondary">HTMLをクリップボードにコピー</button>
+        </div>
+
+        <div class="admin-foot">
+          <p class="small">生成した HTML または ZIP をダウンロードし、GitHub リポジトリにアップロードしてください（posts/ に入れる）。</p>
         </div>
       </div>
 
-      <div class="form-control">
-        <label for="excerpt">抜粋（短い説明）</label>
-        <input id="excerpt" type="text" placeholder="例：バージョン1.20に更新しました">
-      </div>
-
-      <div class="form-control">
-        <label for="content">本文（HTML で記述。マークダウン可）</label>
-        <textarea id="content" placeholder="<p>本文を書きます</p>"></textarea>
-      </div>
-
-      <div class="form-control">
-        <label for="images">画像（複数可、ZIP 出力時に個別ファイルとして格納）</label>
-        <input id="images" type="file" accept="image/*" multiple>
-        <div id="thumbs" style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"></div>
-      </div>
-
-      <div class="controls">
-        <button id="btn-preview">プレビュー</button>
-        <button id="btn-download-embedded">HTMLをダウンロード（画像埋め込み）</button>
-        <button id="btn-download-zip" class="secondary">ZIPをダウンロード（HTML＋画像）</button>
-        <button id="btn-copy" class="secondary">HTMLをクリップボードにコピー</button>
-      </div>
-
-      <div class="admin-foot">
-        <p class="small">ダウンロード後、生成されたファイル（または ZIP）を GitHub リポジトリの <code>posts/</code> にアップロードしてください。</p>
-      </div>
-    </div>
-
-    <div style="flex:1 1 360px">
-      <div>
+      <div style="flex:1 1 420px">
         <label>ライブプレビュー</label>
         <div id="preview" class="preview">
-          <p class="small">ここに記事プレビューが表示されます。</p>
+          <p class="small">ここにプレビューが表示されます。</p>
         </div>
       </div>
     </div>
   </div>
-</div>
 
 <script>
-// 管理画面の振る舞い（クライアントのみ）
 (function(){
   const titleEl = document.getElementById('title');
   const dateEl = document.getElementById('date');
@@ -99,18 +95,16 @@ footer.admin-foot{margin-top:14px;font-size:13px;color:#666}
   const thumbs = document.getElementById('thumbs');
   const preview = document.getElementById('preview');
 
-  // デフォルト日付を今日に
+  // 初期日付を今日
   const today = new Date();
   dateEl.value = today.toISOString().slice(0,10);
 
-  // スラッグ自動生成（タイトル入力時）
-  titleEl.addEventListener('input', ()=> {
-    if (!slugEl.value) {
-      slugEl.value = slugify(titleEl.value);
-    }
+  // スラッグ自動生成
+  titleEl.addEventListener('input', ()=>{
+    if (!slugEl.value) slugEl.value = slugify(titleEl.value);
   });
 
-  // 画像サムネイル表示
+  // 画像サムネ表示
   let imageFiles = [];
   imagesEl.addEventListener('change', (e)=>{
     thumbs.innerHTML = '';
@@ -127,42 +121,40 @@ footer.admin-foot{margin-top:14px;font-size:13px;color:#666}
     });
   });
 
-  // プレビュー更新関数
+  // プレビュー作成
   async function updatePreview(embedded=true){
     const title = titleEl.value || '（タイトルなし）';
-    const date = dateEl.value;
+    const date = dateEl.value || today.toISOString().slice(0,10);
     const excerpt = excerptEl.value || '';
     let bodyHtml = contentEl.value || '';
-    // 画像埋め込み（最初の画像のみサムネとして挿入）
     if (imageFiles.length > 0){
-      const dataUrl = await fileToDataURL(imageFiles[0]);
-      bodyHtml = `<img src="${dataUrl}" alt="${title}" style="max-width:100%;border-radius:6px;margin-bottom:12px">` + bodyHtml;
+      if (embedded){
+        const dataUrl = await fileToDataURL(imageFiles[0]);
+        bodyHtml = `<img src="${dataUrl}" alt="${escapeHtml(title)}" style="max-width:100%;border-radius:6px;margin-bottom:12px">` + bodyHtml;
+      } else {
+        bodyHtml = `<img src="../assets/img/${escapeHtml(imageFiles[0].name)}" alt="${escapeHtml(title)}" style="max-width:100%;border-radius:6px;margin-bottom:12px">` + bodyHtml;
+      }
     }
-    const out = renderPostHtmlFragment(title,date,excerpt,bodyHtml);
-    preview.innerHTML = out;
+    preview.innerHTML = renderPostHtmlFragment(title,date,excerpt,bodyHtml);
   }
 
-  document.getElementById('btn-preview').addEventListener('click', ()=> updatePreview());
+  document.getElementById('btn-preview').addEventListener('click', ()=> updatePreview(true));
 
-  // HTMLを生成する（完全な HTML 文書）
-  async function buildPostHtml(embeddedImages){
+  // HTML を生成
+  async function buildPostHtml(embedded){
     const title = titleEl.value || 'untitled';
     const date = dateEl.value || today.toISOString().slice(0,10);
     const slug = slugEl.value || slugify(title);
     const excerpt = excerptEl.value || '';
     let bodyHtml = contentEl.value || '';
-
-    // 先頭に画像（埋め込み or パス）を挿入（任意）
     if (imageFiles.length > 0){
-      if (embeddedImages){
+      if (embedded){
         const dataUrl = await fileToDataURL(imageFiles[0]);
         bodyHtml = `<img src="${dataUrl}" alt="${escapeHtml(title)}" style="max-width:100%;border-radius:6px;margin-bottom:12px">` + bodyHtml;
       } else {
-        // 画像は個別ファイルとして ZIP に入れるので、相対パス assets/img/<filename> を使う
         bodyHtml = `<img src="../assets/img/${escapeHtml(imageFiles[0].name)}" alt="${escapeHtml(title)}" style="max-width:100%;border-radius:6px;margin-bottom:12px">` + bodyHtml;
       }
     }
-
     const fileName = `${date}-${slug}.html`;
     const html = `<!DOCTYPE html>
 <html lang="ja">
@@ -173,39 +165,47 @@ footer.admin-foot{margin-top:14px;font-size:13px;color:#666}
   <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
 <body>
-  <header>
-    <img src="../assets/img/server-icon.png" alt="Natsuki Community" class="logo">
-    <h1>Natsuki Community Blog</h1>
+  <header class="site-header">
+    <div class="header-inner">
+      <img src="../assets/img/server-icon.png" alt="Natsuki Community" class="logo">
+      <div class="site-title">
+        <h1>Natsuki Community Blog</h1>
+        <p class="lead">マイクラサーバーのアップデートやイベント情報をお届け</p>
+      </div>
+    </div>
   </header>
-  <main>
-    <article>
+
+  <main class="container">
+    <article class="post-card">
       <h2>${escapeHtml(title)}</h2>
-      <p>日付: ${escapeHtml(date)}</p>
+      <div class="post-meta">日付: ${escapeHtml(date)}</div>
       <p class="excerpt">${escapeHtml(excerpt)}</p>
       ${bodyHtml}
+      <p><a href="../index.html">← 戻る</a></p>
     </article>
-    <p><a href="../index.html">← 戻る</a></p>
   </main>
-  <footer>
-    <p>&copy; ${today.getFullYear()} Natsuki Community</p>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; ${today.getFullYear()} Natsuki Community</p>
+    </div>
   </footer>
 </body>
 </html>`;
     return { fileName, html };
   }
 
-  // HTML をダウンロード（画像データを HTML 内に埋め込む）
+  // ダウンロード（埋め込み）
   document.getElementById('btn-download-embedded').addEventListener('click', async ()=>{
     const { fileName, html } = await buildPostHtml(true);
     downloadFileHtml(fileName, html);
   });
 
-  // ZIP を生成（HTML + 画像ファイル）
+  // ZIP (HTML + 画像)
   document.getElementById('btn-download-zip').addEventListener('click', async ()=>{
     const { fileName, html } = await buildPostHtml(false);
     const zip = new JSZip();
     zip.folder("posts").file(fileName, html);
-    // assets/img に画像を格納
     const imgFolder = zip.folder("assets").folder("img");
     for (const f of imageFiles){
       const arr = await fileToArrayBuffer(f);
@@ -216,35 +216,31 @@ footer.admin-foot{margin-top:14px;font-size:13px;color:#666}
     });
   });
 
-  // HTML をクリップボードにコピー
+  // クリップボード
   document.getElementById('btn-copy').addEventListener('click', async ()=>{
     const { html } = await buildPostHtml(true);
     await navigator.clipboard.writeText(html);
-    alert('HTML をクリップボードにコピーしました。GitHub に貼るか、ファイルとして保存してください。');
+    alert('HTML をクリップボードにコピーしました。');
   });
 
-  // ヘルパー
+  // helpers
   function slugify(s){
-    return s.toString().toLowerCase()
+    return s.toString().toLowerCase().trim()
       .replace(/\s+/g,'-')
       .replace(/[^a-z0-9\-]/g,'')
       .replace(/\-+/g,'-')
       .replace(/^\-+|\-+$/g,'');
   }
   function escapeHtml(s){ return (s+'').replace(/[&<>"']/g, function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]); });}
-  function fileToDataURL(file){ return new Promise((res,rej)=>{ const fr = new FileReader(); fr.onload = ()=>res(fr.result); fr.onerror = rej; fr.readAsDataURL(file); });}
-  function fileToArrayBuffer(file){ return new Promise((res,rej)=>{ const fr = new FileReader(); fr.onload = ()=>res(fr.result); fr.onerror = rej; fr.readAsArrayBuffer(file); });}
-  function downloadFileHtml(name, content){
-    const blob = new Blob([content], {type:'text/html;charset=utf-8'});
-    saveAs(blob, name);
-  }
+  function fileToDataURL(file){ return new Promise((res,rej)=>{ const fr=new FileReader(); fr.onload=()=>res(fr.result); fr.onerror=rej; fr.readAsDataURL(file); });}
+  function fileToArrayBuffer(file){ return new Promise((res,rej)=>{ const fr=new FileReader(); fr.onload=()=>res(fr.result); fr.onerror=rej; fr.readAsArrayBuffer(file); });}
+  function downloadFileHtml(name, content){ const blob=new Blob([content],{type:'text/html;charset=utf-8'}); saveAs(blob, name); }
   function renderPostHtmlFragment(title,date,excerpt,bodyHtml){
     return `<h2>${escapeHtml(title)}</h2>
-    <p class="small">日付: ${escapeHtml(date)}</p>
+    <div class="post-meta">日付: ${escapeHtml(date)}</div>
     <p class="small">${escapeHtml(excerpt)}</p>
     <div>${bodyHtml}</div>`;
   }
-
 })();
 </script>
 </body>
