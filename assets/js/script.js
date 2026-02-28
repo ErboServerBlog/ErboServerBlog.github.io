@@ -11,7 +11,7 @@ const posts = [
     date: "2026-02-28",
     excerpt: "利用規約を一部改正しました。",
     img: "assets/img/Erbo5 (3).png",
-    link: "posts/2026-03-05-rules-change.html"
+    link: "posts/2026-02-28-rules-change.html"
   }
 ];
 
