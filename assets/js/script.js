@@ -12,6 +12,13 @@ const posts = [
     excerpt: "利用規約を一部改正しました。",
     img: "assets/img/Erbo5 (3).png",
     link: "posts/2026-02-28-rules-change.html"
+  },
+  {
+    title: "これからの活動について",
+    date: "2026-03-09",
+    excerpt: "これからの活動についてのご案内",
+    img: "assets/img/Erbo5 (3).png",
+    link: "posts/2026-03-09-korekara.html"
   }
 ];
 
